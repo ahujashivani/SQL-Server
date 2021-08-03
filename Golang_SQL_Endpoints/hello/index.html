@@ -1,0 +1,38 @@
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<html>
+    
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand">Test-Database</a>
+      </nav>
+
+<table class="table table-hover table-dark">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Grade</th>
+      </tr>
+    </thead>
+    {{ range .query}}
+    <tbody>
+      <tr>
+        <td scope="row">{{.First_name}}</th>
+        <td>{{.Last_name}}</td>
+        <td>{{.ID}}</td>
+        <td>{{.Grade}}</td>
+        
+      </tr>
+      {{ end }}
+    </tbody>
+  </table>
+  </html>
