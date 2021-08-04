@@ -45,6 +45,23 @@ func establishConnection() string {
 	return connection_string
 }
 
+// Currently Deprecated/unused
+func readYaml(queryName string, conf Config) string {
+	reader, err := os.Open("test.yml")
+	checkError(err)
+
+	// reads yaml file
+	buf, err := ioutil.ReadAll(reader)
+	checkError(err)
+
+	// unmarshals yaml file from raw to unicode
+	err = yaml.Unmarshal(buf, &conf)
+	checkError(err)
+
+	query := conf.Data[queryName]
+	return query
+}
+
 func connectDB(connection_string string, query string) *sql.Rows {
 	db, err := sql.Open("mysql", connection_string)
 	if err != nil {
