@@ -12,7 +12,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -23,30 +23,28 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <aAbout The Project</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
+        <li>About The Project</li>
       </ul>
     </li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a>Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li>Prerequisites</a></li>
+        <li>Docker-ENVs</a></li>
+        <li>Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
+    <li>Usage</a></li>
+    <li>Contact</a></li>
+    <li>Acknowledgements</a></li>
   </ol>
 </details>
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+# About The Project
 
 We created this project to 
 
@@ -54,7 +52,7 @@ We created this project to
 
 
 <!-- GETTING STARTED -->
-## Getting Started
+# Getting Started
 
 In order to obtain a local copy of this project, please follow these simple steps:
 
@@ -62,12 +60,12 @@ In order to obtain a local copy of this project, please follow these simple step
 2. Install Docker (Desktop Application)
 3. Complete the following terminal commands listed in the "installation" section
 
-### Prerequisites
+# Prerequisites
 
 Please make sure to have Docker downloaded as a Desktop application and have the recently cloned directory opened in terminal. Port 8080 and 8000 should remain open until the server starts running.
 
 <!-- Docker Image -->
-### Docker-ENVs
+# Docker-ENVs
 
 The following Environment variables have already been added to the Docker-Compose file. These are placed here for your reference. If you are altering the database name, please make sure to alter the DB_DATABASE environment variable.
 
