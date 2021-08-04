@@ -13,6 +13,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// create structs that will be used
 type User struct {
 	First_name string
 	Last_name  string
@@ -24,97 +25,104 @@ type Config struct {
 	Data map[string]string
 }
 
-func main() {
+// helper function to keep code dry
+func checkError(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
-	//var connection_string = os.Getenv("MYSQL_CONNECTION")
-	var port = ":" + os.Getenv("DB_PORT")
+// Establish local variables from the environment variables found in docker-compose
+func establishConnection() string {
 	var user = os.Getenv("DB_USER")
 	var pass = os.Getenv("DB_PASSWORD")
 	var host = os.Getenv("DB_HOST")
 	var db = os.Getenv("DB_DATABASE")
+
+	// concatenate into form -> user:password@tcp(host)/database_being_accessed
 	connection_string := user + ":" + pass + "@tcp(" + host + ")/" + db
+
+	return connection_string
+}
+
+func connectDB(connection_string string, query string) *sql.Rows {
+	db, err := sql.Open("mysql", connection_string)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("Connection Established")
+	}
+
+	rows, err := db.Query(query)
+	checkError(err)
+
+	defer db.Close() // To be clean and tidy, close database when done.
+
+	return rows
+}
+
+func displayData(rows *sql.Rows, first_name string, last_name string,
+	id string, grade string, users []User) []User {
+
+	for rows.Next() {
+		err := rows.Scan(&first_name, &last_name, &id, &grade)
+		checkError(err)
+		users = append(users, User{First_name: first_name, Last_name: last_name, ID: id, Grade: grade})
+	}
+
+	return users
+}
+
+// Sets up connection, reads config file, executes queries found in config file on connected database
+func executeQuery(c *gin.Context) {
+	var first_name string
+	var last_name string
+	var id string
+	var grade string
+	var users []User
+	var conf Config
+
+	connection_string := establishConnection()
+	queryName := c.Param("queryName")
+
+	// =============================
+	//TODO: put this in function (that works as expected)
+	// locates and opens yaml file
+	reader, err := os.Open("test.yml")
+	checkError(err)
+
+	// reads yaml file
+	buf, err := ioutil.ReadAll(reader)
+	checkError(err)
+
+	// unmarshals yaml file from raw to unicode
+	err = yaml.Unmarshal(buf, &conf)
+	checkError(err)
+
+	query := conf.Data[queryName]
+	// ============================
+
+	// Error message alerts user to a failure without closing the app
+	// Allows for user to retry their request
+	if _, ok := conf.Data[queryName]; !ok {
+		c.Data(404, "text/plain", []byte("Query not found: "+queryName))
+		return
+	}
+
+	rows := connectDB(connection_string, query)
+	users = displayData(rows, first_name, last_name, id, grade, users)
+
+	c.HTML(http.StatusOK, "index.html", gin.H{
+		"title": "Main website",
+		"query": users,
+	})
+}
+
+func main() {
+	var port = ":" + os.Getenv("DB_PORT")
 
 	r := gin.Default()
 	r.LoadHTMLGlob("*.html")
-
-	r.GET("/:queryName", func(c *gin.Context) {
-		queryName := c.Param("queryName")
-		db, err := sql.Open("mysql", connection_string)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("Connection Established")
-		}
-
-		var first_name string
-		var last_name string
-		var id string
-		var grade string
-		var users []User
-
-		// this reads yml file
-
-		var conf Config
-		reader, err := os.Open("test.yml")
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		buf, err := ioutil.ReadAll(reader)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		err = yaml.Unmarshal(buf, &conf)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		fmt.Printf("%+v\n", conf)
-		if _, ok := conf.Data[queryName]; !ok {
-			c.Data(404, "text/plain", []byte("Query not found: "+queryName))
-			return
-		}
-		fmt.Println(conf.Data)
-
-		query := conf.Data[queryName]
-
-		rows, err := db.Query(query)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		for rows.Next() {
-			err := rows.Scan(&first_name, &last_name, &id, &grade)
-			if err != nil {
-				log.Fatal(err)
-			}
-			users = append(users, User{First_name: first_name, Last_name: last_name, ID: id, Grade: grade})
-		}
-
-		fmt.Println(user)
-		fmt.Println(pass)
-		fmt.Println(host)
-		fmt.Println(db)
-		fmt.Println(port)
-		fmt.Println(connection_string)
-
-		fmt.Println(users)
-
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "Main website",
-			"query": users,
-		})
-
-		//c.JSON(http.StatusOK, users)
-
-		defer db.Close()
-
-	})
-
+	r.Handle("GET", "/:queryName", executeQuery)
 	r.Run(port)
 }
