@@ -35,4 +35,10 @@
       {{ end }}
     </tbody>
   </table>
+
+
+  {{ range .query }}
+        <li><a href="/{{.}}">{{.}}</a></li>
+    {{ end }}
+
   </html>

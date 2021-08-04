@@ -26,6 +26,7 @@ services:
       DB_DATABASE: "Dummy_data"
       DB_PORT: "8000"
       MYSQL_CONNECTION: "root:rootpassword@tcp(127.0.0.1:3306)/Dummy_data"
+      FILE_PATH: /Users/shivaniahuja/desktop/Golang_SQL_Endpoints/hello/test.yml
       
   
 

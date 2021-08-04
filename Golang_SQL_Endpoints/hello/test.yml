@@ -1,0 +1,3 @@
+data:
+  test:  "SELECT * FROM authors"
+  test2: "SELECT * FROM authors where id = 1"

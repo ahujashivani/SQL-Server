@@ -9,6 +9,7 @@ RUN go mod download
 COPY *.go ./
 COPY *.html ./
 COPY *.css ./
+COPY *.yml ./
 
 ENV DB_PORT 8000
 RUN go build -o /docker-gs-ping

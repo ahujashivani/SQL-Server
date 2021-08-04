@@ -3,12 +3,14 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type User struct {
@@ -16,6 +18,10 @@ type User struct {
 	Last_name  string
 	ID         string
 	Grade      string
+}
+
+type Config struct {
+	Data map[string]string
 }
 
 func main() {
@@ -31,7 +37,8 @@ func main() {
 	r := gin.Default()
 	r.LoadHTMLGlob("*.html")
 
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/:queryName", func(c *gin.Context) {
+		queryName := c.Param("queryName")
 		db, err := sql.Open("mysql", connection_string)
 		if err != nil {
 			fmt.Println(err)
@@ -45,7 +52,37 @@ func main() {
 		var grade string
 		var users []User
 
-		rows, err := db.Query("SELECT * FROM authors")
+		// this reads yml file
+
+		var conf Config
+		reader, err := os.Open("test.yml")
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		buf, err := ioutil.ReadAll(reader)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = yaml.Unmarshal(buf, &conf)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("%+v\n", conf)
+		if _, ok := conf.Data[queryName]; !ok {
+			c.Data(404, "text/plain", []byte("Query not found: "+queryName))
+			return
+		}
+		fmt.Println(conf.Data)
+
+		query := conf.Data[queryName]
+
+		rows, err := db.Query(query)
 
 		if err != nil {
 			log.Fatal(err)
