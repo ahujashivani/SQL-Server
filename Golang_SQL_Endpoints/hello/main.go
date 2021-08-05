@@ -45,8 +45,9 @@ func establishConnection() string {
 	return connection_string
 }
 
-// Currently Deprecated/unused
-func readYaml(queryName string, conf Config) string {
+// unmarshal database queries from the config file
+func readYaml(queryName string, conf Config) (Config, string) {
+	// locates and opens yaml file
 	reader, err := os.Open("test.yml")
 	checkError(err)
 
@@ -59,10 +60,11 @@ func readYaml(queryName string, conf Config) string {
 	checkError(err)
 
 	query := conf.Data[queryName]
-	return query
+
+	return conf, query
 }
 
-// connects to Database using query, returns all rows queried
+// returns all rows queried
 func connectDB(connection_string string, query string) *sql.Rows {
 	db, err := sql.Open("mysql", connection_string)
 	checkError(err)
@@ -101,23 +103,7 @@ func executeQuery(c *gin.Context) {
 
 	connection_string := establishConnection()
 	queryName := c.Param("queryName")
-
-	// =============================
-	//TODO: put this in function (that works as expected)
-	// locates and opens yaml file
-	reader, err := os.Open("test.yml")
-	checkError(err)
-
-	// reads yaml file
-	buf, err := ioutil.ReadAll(reader)
-	checkError(err)
-
-	// unmarshals yaml file from raw to unicode
-	err = yaml.Unmarshal(buf, &conf)
-	checkError(err)
-
-	query := conf.Data[queryName]
-	// ============================
+	conf, query := readYaml(queryName, conf)
 
 	// Error message alerts user to a failure without closing the app
 	// Allows for user to retry their request
