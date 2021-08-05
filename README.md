@@ -43,10 +43,7 @@
 <!-- ABOUT THE PROJECT -->
 # About The Project
 
-We created this project to 
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
+We created a Golang Web Application which accepts a web request, runs a SQL query and returns data from a SQL server.
 
 <!-- GETTING STARTED -->
 # Getting Started
