@@ -139,7 +139,7 @@ The SQL queries in the YML file will be parsed in main.go and render on http://l
 
 Shivani Ahuja - shivaniahuja2001@gmail.com
 <br />
-Nick Almeder - [add email here]
+Nick Almeder - NickAlmeder@Yahoo.com
 
 Project Link: [https://github.com/ahujashivani/MySQL-Server](https://github.com/ahujashivani/MySQL-Server)
 
