@@ -62,13 +62,12 @@ func readYaml(queryName string, conf Config) string {
 	return query
 }
 
+// connects to Database using query, returns all rows queried
 func connectDB(connection_string string, query string) *sql.Rows {
 	db, err := sql.Open("mysql", connection_string)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Connection Established")
-	}
+	checkError(err)
+
+	fmt.Println("Connection Established")
 
 	rows, err := db.Query(query)
 	checkError(err)
@@ -78,7 +77,8 @@ func connectDB(connection_string string, query string) *sql.Rows {
 	return rows
 }
 
-func displayData(rows *sql.Rows, first_name string, last_name string,
+// builds data from rows queried to be displayed by HTML
+func buildUsers(rows *sql.Rows, first_name string, last_name string,
 	id string, grade string, users []User) []User {
 
 	for rows.Next() {
@@ -127,8 +127,9 @@ func executeQuery(c *gin.Context) {
 	}
 
 	rows := connectDB(connection_string, query)
-	users = displayData(rows, first_name, last_name, id, grade, users)
+	users = buildUsers(rows, first_name, last_name, id, grade, users)
 
+	// displays all users queried
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"title": "Main website",
 		"query": users,
